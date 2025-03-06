@@ -14,6 +14,7 @@ import {
   AuthCredentialsValidator,
   TAuthCredentialsValidator,
 } from "@/lib/validators/account-credentials-validator";
+import { trpc } from "@/trpc/client";
 
 const Page = () => {
   const {
@@ -23,6 +24,9 @@ const Page = () => {
   } = useForm<TAuthCredentialsValidator>({
     resolver: zodResolver(AuthCredentialsValidator),
   });
+
+  const { data } = trpc.anyApiRoute.useQuery(); // If you're wondering why it is either a string or undefined, because it's a client side fetch. When the page loads it will be undefined for a very short time while the trpc loads the data and fetches it from the backend and then it's going to populate it with actual data.
+  console.log(data);
 
   const onSubmit = ({ email, password }: TAuthCredentialsValidator) => {
     //TODO: Send data to the server

@@ -1,9 +1,19 @@
 import express from "express";
 import { getPayloadClient } from "./get-payload";
 import { nextApp, nextHandler } from "./next-utils";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import { appRouter } from "./trpc";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
+
+const createContext = ({
+  req,
+  res,
+}: trpcExpress.CreateExpressContextOptions) => ({
+  req,
+  res,
+});
 
 const start = async () => {
   const payload = await getPayloadClient({
@@ -14,6 +24,16 @@ const start = async () => {
       },
     },
   });
+
+  // When we get a request in our server (because we're self hosting) we will get it here. We can simply forward that to trpc in nextjs to handle it appropriately
+  app.use(
+    "/api/trpc",
+    trpcExpress.createExpressMiddleware({
+      router: appRouter,
+      createContext, // Take req and res from express then attach it to a context to be able to use it in next.js
+    })
+  );
+  // When we get a request to this endpoint, we want to forward it to trpc in next.js
 
   app.use((req, res) => nextHandler(req, res));
 
