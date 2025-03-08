@@ -25,11 +25,11 @@ const Page = () => {
     resolver: zodResolver(AuthCredentialsValidator),
   });
 
-  const { data } = trpc.anyApiRoute.useQuery(); // If you're wondering why it is either a string or undefined, because it's a client side fetch. When the page loads it will be undefined for a very short time while the trpc loads the data and fetches it from the backend and then it's going to populate it with actual data.
-  console.log(data);
+  // Use useQuery for any other operation that is not a mutation
+  const { mutate, isLoading } = trpc.auth.createPayloadUser.useMutation({});
 
   const onSubmit = ({ email, password }: TAuthCredentialsValidator) => {
-    //TODO: Send data to the server
+    mutate({ email, password });
   };
 
   return (
@@ -66,6 +66,7 @@ const Page = () => {
                   <Label htmlFor="password">Password</Label>
                   <Input
                     {...register("password")}
+                    type="password"
                     className={cn({
                       "focus-visible:ring-red-500": errors.password,
                     })}
