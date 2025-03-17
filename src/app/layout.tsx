@@ -23,7 +23,7 @@ export default function RootLayout({
       <body
         className={cn("relative h-full font-sans antialiased", inter.className)}
       >
-        <main className="relative flex flex-col min-h-screen ">
+        <main className="relative flex flex-col min-h-screen">
           <Providers>
             <Navbar />
             {/* Make it takes the entire space / make the footer always be at the bottom */}
