@@ -46,14 +46,14 @@ export const Products: CollectionConfig = {
       options: PRODUCT_CATEGORIES.map(({ label, value }) => ({ label, value })),
       required: true,
     },
-    /* {
+    {
       name: "product_files",
       label: "Product file(s)",
       type: "relationship",
       required: true,
       relationTo: "product_files", // Reference to product_files collection
       hasMany: false, // Each product has exactly one product file
-    }, */
+    },
     {
       name: "approvedForSale", // Only admin should be able to change this
       label: "Product Status",
