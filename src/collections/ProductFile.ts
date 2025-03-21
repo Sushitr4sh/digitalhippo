@@ -55,7 +55,7 @@ const yourOwnAndPurchased: Access = async ({ req }) => {
     .flat();
 
   return {
-    id: [...ownProductFileIds, ...purchasedProductFileIds], // Check if the file that you're requesting in either of these two arrays
+    id: { in: [...ownProductFileIds, ...purchasedProductFileIds] }, // Check if the file that you're requesting in either of these two arrays
   };
 };
 
