@@ -1,7 +1,11 @@
+import AddToCartButton from "@/components/AddToCartButton";
+import ImageSlider from "@/components/ImageSlider";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import ProductReel from "@/components/ProductReel";
 import { PRODUCT_CATEGORIES } from "@/config";
 import { getPayloadClient } from "@/get-payload";
 import { formatPrice } from "@/lib/utils";
+import { Check, Shield } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -41,6 +45,10 @@ const Page = async ({ params }: PageProps) => {
   const label = PRODUCT_CATEGORIES.find(
     ({ value }) => value === product.category
   )?.label;
+
+  const validUrls = product.images
+    .map(({ image }) => (typeof image === "string" ? image : image.url))
+    .filter(Boolean) as string[];
 
   return (
     <MaxWidthWrapper className="bg-white">
@@ -95,10 +103,54 @@ const Page = async ({ params }: PageProps) => {
                   {product.description}
                 </p>
               </div>
+
+              <div className="mt-6 flex items-center">
+                <Check
+                  aria-hidden="true"
+                  className="h-5 w-5 flex shrink-0 text-green-500"
+                />
+                <p className="ml-2 text-sm text-muted-foreground">
+                  Eligible for isntant delivery
+                </p>
+              </div>
             </section>
+          </div>
+
+          {/* Product images */}
+          <div className="mt-10 lg:col-start-2 lg:row-span-2 lg:mt-0 lg:self-center">
+            <div className="aspect-square rounded-lg">
+              <ImageSlider urls={validUrls} />
+            </div>
+          </div>
+
+          {/* Add to cart */}
+          <div className="mt-10 lg:col-start-1 lg:row-start-2 lg:max-w-lg lg:self-start">
+            <div>
+              <div className="mt-10">
+                <AddToCartButton product={product} />
+              </div>
+              <div className="mt-6 text-center">
+                <div className="group inline-flex text-sm font-medium">
+                  <Shield
+                    aria-hidden="true"
+                    className="mr-2 h-5 w-5 flex-shrink-0 text-gray-400"
+                  />
+                  <span className="text-muted-foreground hover:text-gray-700">
+                    30 Return Guarantee
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <ProductReel
+        href="/products"
+        query={{ category: product.category, limit: 4 }}
+        title={`Similar ${label}`}
+        subtitle={`Browse similar high-quality ${label} just like '${product.name}`}
+      />
     </MaxWidthWrapper>
   );
 };
