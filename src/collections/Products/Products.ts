@@ -1,5 +1,14 @@
+import { BeforeChangeHook } from "payload/dist/collections/config/types";
 import { PRODUCT_CATEGORIES } from "../../config";
 import { CollectionConfig } from "payload/types";
+import { Product } from "../../payload-types";
+import { stripe } from "../../lib/stripe";
+
+const addUser: BeforeChangeHook<Product> = async ({ req, data }) => {
+  const user = req.user;
+
+  return { ...data, user: user.id };
+};
 
 // CollectionConfig let us know what we can pass in here/valid
 export const Products: CollectionConfig = {
@@ -9,6 +18,51 @@ export const Products: CollectionConfig = {
   },
   // Who can access which part of which products
   access: {},
+  hooks: {
+    // We can execute our own code when a product is created
+    beforeChange: [
+      addUser,
+      async (args) => {
+        if (args.operation === "create") {
+          // This mean if we are creating a new product and new product in stripe as well
+          const data = args.data as Product;
+
+          // Create a product in stripe which is nothing else than the transaction fee product that we made in stripe dashboard
+          const createdProduct = await stripe.products.create({
+            name: data.name,
+            default_price_data: {
+              currency: "USD",
+              unit_amount: Math.round(data.price * 100), // Price of the product in cents not dollar
+            },
+          });
+
+          const updated: Product = {
+            ...data,
+            stripeId: createdProduct.id,
+            priceId: createdProduct.default_price as string, // Price id is the transaction fee api id, that's how stripe knows how much a product costs internally
+          };
+
+          return updated;
+        } else if (args.operation === "update") {
+          // We don't want to create new product in stripe if we're updating
+          const data = args.data as Product;
+
+          const updatedProduct = await stripe.products.update(data.stripeId!, {
+            name: data.name,
+            default_price: data.priceId!,
+          });
+
+          const updated: Product = {
+            ...data,
+            stripeId: updatedProduct.id,
+            priceId: updatedProduct.default_price as string,
+          };
+
+          return updated;
+        }
+      },
+    ],
+  },
   fields: [
     {
       name: "user",

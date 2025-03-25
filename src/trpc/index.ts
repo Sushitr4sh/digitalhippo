@@ -3,12 +3,14 @@ import { authRouter } from "./auth-router";
 import { publicProcedure, router } from "./trpc";
 import { getPayloadClient } from "../get-payload";
 import { QueryValidator } from "../lib/validators/query-validator";
+import { paymentRouter } from "./payment-router";
 
 // This file defines the application router using the procedures created in trpc.ts
 // We don't need to put all the API logic/procedure inside this file
 
 export const appRouter = router({
   auth: authRouter,
+  payment: paymentRouter,
 
   getInfiniteProducts: publicProcedure
     .input(
