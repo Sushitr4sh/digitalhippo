@@ -45,6 +45,7 @@ export const Media: CollectionConfig = {
   admin: {
     hidden: ({ user }) => user.role !== "admin", // Hide this in user dashboard, because it doesn't make sense to upload media which is not connected to a product.
   },
+  // When you define an upload collection like Media with the upload configuration, Payload automatically generates URLs for your uploaded files. Even though you don't explicitly define a url field, Payload creates access points for your media files.
   upload: {
     staticURL: "/media", // Where we want the actual product files to live.
     staticDir: "media", // Media directory in our file sytem where the images will be stored, you can also export them to services like AWS S3/GCP Cloud Storage.
