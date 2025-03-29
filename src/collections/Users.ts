@@ -1,6 +1,16 @@
 import dotenv from "dotenv";
 import path from "path";
-import { CollectionConfig } from "payload/types";
+import { Access, CollectionConfig } from "payload/types";
+
+const adminsAndUser: Access = ({ req: { user } }) => {
+  if (user.role === "admin") return true;
+
+  return {
+    id: {
+      equals: user.id,
+    },
+  };
+};
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
@@ -14,10 +24,38 @@ export const Users: CollectionConfig = {
     },
   },
   access: {
-    read: () => true,
+    // Who should be able to read user? Well the answer is the admin and the user itself
+    read: adminsAndUser,
     create: () => true,
+    update: ({ req }) => req.user.role === "admin",
+    delete: ({ req }) => req.user.role === "admin",
+  },
+  admin: {
+    // This should be hidden for everyone who is not admin
+    hidden: ({ user }) => user.role !== "admin",
+    defaultColumns: ["id"],
   },
   fields: [
+    {
+      name: "products",
+      label: "Products",
+      admin: {
+        condition: () => false,
+      },
+      type: "relationship",
+      relationTo: "products",
+      hasMany: true,
+    },
+    {
+      name: "product_files",
+      label: "Product files",
+      admin: {
+        condition: () => false,
+      },
+      type: "relationship",
+      relationTo: "product_files",
+      hasMany: true,
+    },
     {
       name: "role",
       defaultValue: "user",
