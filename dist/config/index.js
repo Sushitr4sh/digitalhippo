@@ -4,21 +4,21 @@ exports.PRODUCT_CATEGORIES = void 0;
 exports.PRODUCT_CATEGORIES = [
     {
         label: "UI Kits",
-        value: "ui_kits", //This means value must always be "ui_kits", preventing accidental changes or invalid values.
+        value: "ui_kits",
         featured: [
             {
-                name: "Editor Picks",
-                href: "#",
+                name: "Editor picks",
+                href: "/products?category=ui_kits",
                 imageSrc: "/nav/ui-kits/mixed.jpg",
             },
             {
                 name: "New Arrivals",
-                href: "#",
+                href: "/products?category=ui_kits&sort=desc",
                 imageSrc: "/nav/ui-kits/blue.jpg",
             },
             {
                 name: "Bestsellers",
-                href: "#",
+                href: "/products?category=ui_kits",
                 imageSrc: "/nav/ui-kits/purple.jpg",
             },
         ],
@@ -29,17 +29,17 @@ exports.PRODUCT_CATEGORIES = [
         featured: [
             {
                 name: "Favorite Icon Picks",
-                href: "#",
+                href: "/products?category=icons",
                 imageSrc: "/nav/icons/picks.jpg",
             },
             {
                 name: "New Arrivals",
-                href: "#",
+                href: "/products?category=icons&sort=desc",
                 imageSrc: "/nav/icons/new.jpg",
             },
             {
                 name: "Bestselling Icons",
-                href: "#",
+                href: "/products?category=icons",
                 imageSrc: "/nav/icons/bestsellers.jpg",
             },
         ],
